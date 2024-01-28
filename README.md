@@ -15,6 +15,6 @@ You must now load the videos collection with ./scripts/mongodb.json into video-s
 Then point your browser at http://localhost:4002/video?id=5d9e690ad76fe06a3d7ae416
 
 ## Kubernetese
-Kubernetes authenticatio (kubeconfig):
+Kubernetes authentication (kubeconfig):
 
     az aks get-credentials --resource-group <your-app-name> --name <your-app-name
