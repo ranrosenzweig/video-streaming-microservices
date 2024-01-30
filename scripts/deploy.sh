@@ -9,7 +9,7 @@ set -u # or set -o nounset
 : "$ARM_TENANT_ID"
 : "$ARM_SUBSCRIPTION_ID"
 
-cd ../infra
+cd ./infra
 export KUBERNETES_SERVICE_HOST="" # Workaround for https://github.com/terraform-providers/terraform-provider-kubernetes/issues/679
 terraform init 
 terraform apply -auto-approve \
