@@ -1,0 +1,16 @@
+{
+  "name": "video-streaming-microservices",
+  "version": "1.0.0",
+  "description": "This is an simple application that stream video clips with microservices architectual.",
+  "main": "index.js",
+  "scripts": {
+    "test:watch": "cypress open",
+    "test": "cypress run"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^4.12.1",
+    "mongodb": "^3.6.0"
+  }
+}
