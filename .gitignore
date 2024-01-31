@@ -4,7 +4,10 @@ node_modules/
 infra/.terraform.tfstate.lock.info
 infra/.terraform.lock.hcl
 
-
-
 infra/terraform.tfstate
 infra/terraform.tfstate.backup
+
+cypress/integration/examples/
+cypress/fixtures/example.json
+cypress/videos/
+cypress/screenshots/
