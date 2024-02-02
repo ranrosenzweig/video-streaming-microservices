@@ -14,8 +14,9 @@ describe("metadata microservice", () => {
     jest.doMock("express", () => { // Mock the Express module.
         return () => { // The Express module is a factory function that creates an Express app object.
             return { // Mock Express app object.
-                listen: mockListenFn,
-                get: mockGetFn,
+                listen: mockListenFn, // Mock listen function.
+                get: mockGetFn, // Mock get function.
+                use: () => {}, // Mock use function.
             };
         };
     });
@@ -42,6 +43,27 @@ describe("metadata microservice", () => {
                     return mockMongoClient;
                 }
             }
+        };
+    });
+
+    jest.doMock("amqplib", () => { // Mock the amqplib (RabbitMQ) library.
+        return { // Returns a mock version of the library.
+            connect: async () => { // Mock function to connect to RabbitMQ.
+                return { // Returns a mock "messaging connection".
+                    createChannel: async () => { // Mock function to create a messaging channel.
+                        return { // Returns a mock "messaging channel".
+                            assertExchange: async () => {},
+                            assertQueue: async () => {
+                                return {
+                                    queue: "my-queue", // Fake name for anonymous queue.
+                                };
+                            },
+                            bindQueue: async () => {},
+                            consume: () => {},
+                        };
+                    },
+                };
+            },
         };
     });
 

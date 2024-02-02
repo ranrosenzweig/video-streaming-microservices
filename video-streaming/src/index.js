@@ -1,7 +1,6 @@
 const express = require("express");
-const fs = require("fs");
 const amqp = require('amqplib');
-const moment = require("moment");
+const http = require("http");
 
 if (!process.env.RABBIT) {
     throw new Error("Please specify the name of the RabbitMQ host using environment variable RABBIT");
@@ -31,12 +30,12 @@ function connectRabbit() {
 }
 
 //
-// Send the "viewed" to the history microservice.
+// Broadcast the "viewed" message.
 //
-function sendViewedMessage(messageChannel, videoPath) {
+function broadcastViewedMessage(messageChannel, videoId) {
     console.log(`Publishing message on "viewed" exchange.`);
         
-    const msg = { videoPath: videoPath };
+    const msg = { video: { id: videoId } };
     const jsonMsg = JSON.stringify(msg);
     messageChannel.publish("viewed", "", Buffer.from(jsonMsg)); // Publish message to the "viewed" exchange.
 }
@@ -46,24 +45,24 @@ function sendViewedMessage(messageChannel, videoPath) {
 //
 function setupHandlers(app, messageChannel) {
     app.get("/video", (req, res) => { // Route for streaming video.
+        const videoId = req.query.id;
 
-        const videoPath = "./videos/banana.mp4";
-        fs.stat(videoPath, (err, stats) => {
-            if (err) {
-                console.error("An error occurred ");
-                res.sendStatus(500);
-                return;
+        const forwardRequest = http.request( // Forward the request to the video storage microservice.
+            {
+                host: `video-storage`,
+                path: `/video?id=${videoId}`,
+                method: 'GET',
+                headers: req.headers,
+            }, 
+            forwardResponse => {
+                res.writeHeader(forwardResponse.statusCode, forwardResponse.headers);
+                forwardResponse.pipe(res);
             }
-    
-            res.writeHead(200, {
-                "Content-Length": stats.size,
-                "Content-Type": "video/mp4",
-            });
-    
-            fs.createReadStream(videoPath).pipe(res);
+        );
+        
+        req.pipe(forwardRequest);
 
-            sendViewedMessage(messageChannel, videoPath); // Send message to "history" microservice that this video has been "viewed".
-        });
+        broadcastViewedMessage(messageChannel, videoId); // Send "viewed" message to indicate this video has been watched.
     });
 }
 
