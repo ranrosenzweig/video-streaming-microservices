@@ -6,16 +6,25 @@ You need Docker and Docker-Compose installed to run this.
 
 ![Alt text](images/Diagram.png "Diagram")
 
-Boot it up from the terminal using:
+## Services description:
+* ***Gateway*** - The entry point to the application. Serves the front end and provides a REST API.
+* ***Video streaming*** - Streams videos from storage to be watched by the user.
+* ***Video upload*** - Orchestrates upload of videos to storage.
+* ***History*** - Records the user’s viewing history.
+* ***Metadata*** - Records details and metadata about each video.
+* ***Video storage*** - Responsible for storing and retrieving videos from external cloud storage.
 
-    docker-compose up --build
+## Booting a microservice (might need install MongoDB and/or RabbitMQ)
+    npm install
+    npm start
 
-You must now load the videos collection with ./scripts/mongodb.json into video-streaming database. You can do this using Robo 3T or mongoimport.
+or in development mode
 
-Then point your browser at http://localhost:4002/video?id=5d9e690ad76fe06a3d7ae416
+    npm install
+    npm run start:dev
 
-## Deployment
-### with Docker-compose (for non production deployments)
+## Booting the application
+### with Docker-compose (for non production deployment)
 
     docker-compose up --build
 ### with Kubernetese (Azure)
@@ -23,11 +32,21 @@ Kubernetes authenticatio (kubeconfig):
 
     az aks get-credentials --resource-group <your-app-name> --name <your-app-name
 
+## Application home page:
+Open your browser at http://localhost:4000
+
 ## Tests
 ### Unit tests and integration tests ([with Jest](https://jestjs.io/)) for metadata service
 
     cd metadata
+    npm install
     npm test
+or with live reload mode
+
+    cd metadata
+    npm install
+    npm test
+
 ### End2End tests (with [Cypress](https://www.cypress.io/))
 
     npm test

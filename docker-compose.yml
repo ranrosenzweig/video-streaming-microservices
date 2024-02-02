@@ -10,6 +10,14 @@ services:
       - "27017"
     restart: always
   
+  rabbit:
+    image: rabbitmq:3.8.5-management
+    container_name: rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+  
   # Service for loading database fixtures.
   db-fixture-rest-api:
     image: db-fixture-rest-api
@@ -26,17 +34,27 @@ services:
       - NODE_ENV=development
     volumes:
      - ./fixtures:/usr/src/app/fixtures:z
+     - ./db-fixture-rest-api/src:/usr/src/app/src:z
     depends_on:
       - db
     restart: always
-    
-  rabbit:
-    image: rabbitmq:3.8.5-management
-    container_name: rabbit
+
+  gateway:
+    image: gateway
+    build: 
+      context: ./gateway
+      dockerfile: Dockerfile-dev
+    container_name: gateway
+    volumes:
+      - /tmp/gateway/npm-cache:/root/.npm:z
+      - ./gateway/src:/usr/src/app/src:z
+      - ./gateway/public:/usr/src/app/public:z
     ports:
-      - "5672:5672"
-      - "15672:15672"
-    restart: always
+      - "4000:80"
+    environment:
+      - PORT=80
+      - NODE_ENV=development
+    restart: "no"
 
   video-streaming:
     image: video-streaming
@@ -47,7 +65,6 @@ services:
     volumes:
       - /tmp/video-streaming/npm-cache:/root/.npm:z
       - ./video-streaming/src:/usr/src/app/src:z
-      - ./video-streaming/videos:/usr/src/app/videos:z
     ports:
       - "4001:80"
     environment:
@@ -56,6 +73,29 @@ services:
       - NODE_ENV=development
     depends_on:
       - rabbit
+      - db
+      - video-storage
+    restart: "no"
+
+  video-upload:
+    image: video-upload
+    build: 
+      context: ./video-upload
+      dockerfile: Dockerfile-dev
+    container_name: video-upload
+    volumes:
+      - /tmp/video-upload/npm-cache:/root/.npm:z
+      - ./video-upload/src:/usr/src/app/src:z
+      - ./video-upload/uploads:/usr/src/app/uploads:z
+    ports:
+     - "4004:80"
+    environment:
+      - PORT=80
+      - RABBIT=amqp://guest:guest@rabbit:5672
+      - NODE_ENV=development
+    depends_on:
+      - rabbit
+      - video-storage
     restart: "no"
 
   history:
@@ -80,43 +120,37 @@ services:
       - rabbit
     restart: "no"
 
-  recommendations:
-    image: recommendations
+# video-storage:
+  #   image: azure-storage
+  #   build: 
+  #     context: ./azure-storage
+  #     dockerfile: Dockerfile-dev
+  #   container_name: video-storage
+  #   volumes:
+  #     - /tmp/azure-storage/npm-cache:/root/.npm:z
+  #     - ./azure-storage/src:/usr/src/app/src:z
+  #   ports:
+  #    - "4005:80"
+  #   environment:
+  #     - PORT=80
+  #     - STORAGE_ACCOUNT_NAME=<your-storage-account>
+  #     - STORAGE_ACCESS_KEY=<your-access-key>
+  #   restart: "no"
+
+  video-storage:
+    image: mock-storage
     build: 
-      context: ./recommendations
+      context: ./mock-storage
       dockerfile: Dockerfile-dev
-    container_name: recommendations
+    container_name: video-storage
     volumes:
-      - /tmp/recommendations/npm-cache:/root/.npm:z
-      - ./recommendations/src:/usr/src/app/src:z
+      - /tmp/mock-storage/npm-cache:/root/.npm:z
+      - ./mock-storage/src:/usr/src/app/src:z
+      - ./mock-storage/storage:/usr/src/app/storage:z
     ports:
-     - "4003:80"
+     - "4005:80"
     environment:
       - PORT=80
-      - RABBIT=amqp://guest:guest@rabbit:5672
-      - DBHOST=mongodb://db:27017
-      - DBNAME=recommendations
-      - NODE_ENV=development
-    depends_on:
-      - db
-      - rabbit
-    restart: "no"
-  
-  gateway:
-    image: gateway
-    build: 
-      context: ./gateway
-      dockerfile: Dockerfile-dev
-    container_name: gateway
-    volumes:
-      - /tmp/gateway/npm-cache:/root/.npm:z
-      - ./gateway/src:/usr/src/app/src:z
-      - ./gateway/public:/usr/src/app/public:z
-    ports:
-      - "4000:80"
-    environment:
-      - PORT=80
-      - NODE_ENV=development
     restart: "no"
 
   metadata:
@@ -132,9 +166,11 @@ services:
      - "4006:80"
     environment:
       - PORT=80
+      - RABBIT=amqp://guest:guest@rabbit:5672
       - DBHOST=mongodb://db:27017
       - DBNAME=metadata
       - NODE_ENV=development
     depends_on:
       - db
+      - rabbit
     restart: "no"

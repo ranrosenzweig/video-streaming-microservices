@@ -12,12 +12,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "axios": "^0.19.2",
     "jest": "^26.2.2",
+    "axios": "^0.19.2",
     "nodemon": "^1.19.1"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "mongodb": "^3.6.0"
+    "mongodb": "^3.6.0",
+    "amqplib": "^0.5.5",
+    "wait-port": "^0.2.6"
   }
 }

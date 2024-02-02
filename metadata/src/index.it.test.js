@@ -8,7 +8,7 @@ const mongodb = require("mongodb");
 describe("metadata microservice it", () => {
     
     const BASE_URL = "http://localhost:3000"; // Base URL for our HTTP server.
-    const DBHOST = "mongodb://localhost:4000"; // Have the database running on this computer.
+    const DBHOST = "mongodb://localhost:27017"; // Have the database running on this computer.
     const DBNAME = "testdb";
 
     //

@@ -11,3 +11,5 @@ cypress/integration/examples/
 cypress/fixtures/example.json
 cypress/videos/
 cypress/screenshots/
+
+mock-storage/storage/
