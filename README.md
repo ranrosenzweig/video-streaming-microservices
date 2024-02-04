@@ -3,7 +3,12 @@
 This is an simple application that stream video clips with microservices architectual.
 
 You need Docker and Docker-Compose installed to run this.
+## Features:
+* ***Video Streaming*** - on the *Home* Page, a user can stream a video from his collection.
+* ***Upload videos*** - on the *Upload* page,  a user can add a new video to the collection of the application.
+* ***Viewed History*** - on the *History* page, a user can see statistics of his historical viewed.
 
+# Architectual Diagram
 ![Alt text](images/Diagram.png "Diagram")
 
 ## Services description:
