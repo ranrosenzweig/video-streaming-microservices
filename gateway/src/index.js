@@ -28,7 +28,7 @@ function setupHandlers(app) {
                 });
 
                 response.on("end", () => {
-                    // Renders the video list for display in the browser.
+                    // Renders the video list for display in the browser. 
                     res.render("video-list", { videos: JSON.parse(data).videos });
                 });
 
