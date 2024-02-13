@@ -32,13 +32,39 @@ or in development mode
 ### with Docker-compose (for non production deployment)
 
     docker-compose up --build
-### with Kubernetese (Azure)
+
+Open your browser at http://localhost:4000
+### with Kubernetese (Azure) with Terraform
+Get details from your Azure account:
+
+    az account show
+Create a service principal, account id as subscription-id and copy appId, password:
+
+    az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<subscription-id>"
+
+Create a Azure storage account and then create a storage container.
+
+Initialize and invoke Terraform, from previous stage, use appId as client_id, password as client_secret.
+
+    cd infra
+    terraform init
+    terraform apply -var="app_version=<app_version>" \
+                    -var="client_id=<client_id>" \
+                    -var="client_secret=<client_secret>" \
+                    -var="storage_account_name=<storage_account_name>" \
+                    -var="storage_access_key=<storage_access_key>"
+
+
 Kubernetes authenticatio (kubeconfig):
 
-    az aks get-credentials --resource-group <your-app-name> --name <your-app-name
+    az aks get-credentials --resource-group <your-app-name> --name <your-app-name>
 
-## Application home page:
-Open your browser at http://localhost:4000
+Get the external IP of the gateway service
+
+    kubectl get service
+
+
+Open your browser at http://gateway-external-ip
 
 ## Tests
 ### Unit tests and integration tests ([with Jest](https://jestjs.io/)) for metadata service

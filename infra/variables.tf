@@ -20,3 +20,17 @@ variable client_id {
 variable client_secret {
 
 }
+
+variable storage_account_name {
+}
+
+variable storage_access_key {
+}
+
+variable rabbit_url {
+    default = "amqp://guest:guest@rabbit:5672"
+}
+
+variable database_url {
+    default = "mongodb://db:27017"
+}
