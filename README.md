@@ -1,17 +1,17 @@
 # Video Streaming Application
 
-This is an simple application that stream video clips with microservices architectual.
+This is a simple application that streams video clips with microservices architectural.
 
 You need Docker and Docker-Compose installed to run this.
 ## Features:
 * ***Video Streaming*** - on the *Home* Page, a user can stream a video from his collection.
 * ***Upload videos*** - on the *Upload* page,  a user can add a new video to the collection of the application.
-* ***Viewed History*** - on the *History* page, a user can see statistics of his historical viewed.
+* ***Viewed History*** - on the *History* page, a user can see statistics of his historical views.
 
 # Architectual Diagram
 ![Alt text](images/Diagram.png "Diagram")
 
-## Services description:
+## Services Description:
 * ***Gateway*** - The entry point to the application. Serves the front end and provides a REST API.
 * ***Video streaming*** - Streams videos from storage to be watched by the user.
 * ***Video upload*** - Orchestrates upload of videos to storage.
@@ -19,7 +19,7 @@ You need Docker and Docker-Compose installed to run this.
 * ***Metadata*** - Records details and metadata about each video.
 * ***Video storage*** - Responsible for storing and retrieving videos from external cloud storage.
 
-## Booting a microservice (might need install MongoDB and/or RabbitMQ)
+## Booting a microservice (might need to install MongoDB and/or RabbitMQ)
     npm install
     npm start
 
@@ -29,7 +29,7 @@ or in development mode
     npm run start:dev
 
 ## Booting the application
-### with Docker-compose (for non production deployment)
+### with Docker-compose (for non-production deployment)
 
     docker-compose up --build
 
@@ -38,13 +38,13 @@ Open your browser at http://localhost:4000
 Get details from your Azure account:
 
     az account show
-Create a service principal, account id as subscription-id and copy appId, password:
+Create a service principal, account ID as subscription-id and copy appId, password:
 
     az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<subscription-id>"
 
-Create a Azure storage account and then create a storage container.
+Create an Azure storage account and then create a storage container.
 
-Initialize and invoke Terraform, from previous stage, use appId as client_id, password as client_secret.
+Initialize and invoke Terraform, from the previous stage, use appId as client_id, and password as client_secret.
 
     cd infra
     terraform init
@@ -55,7 +55,7 @@ Initialize and invoke Terraform, from previous stage, use appId as client_id, pa
                     -var="storage_access_key=<storage_access_key>"
 
 
-Kubernetes authenticatio (kubeconfig):
+Kubernetes authentication (kubeconfig):
 
     az aks get-credentials --resource-group <your-app-name> --name <your-app-name>
 
